@@ -1,5 +1,4 @@
 # ml-agario-project
-First year Masters project
 
 The environment that was used can be found in the following link: 
 
