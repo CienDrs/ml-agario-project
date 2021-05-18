@@ -3,6 +3,8 @@
 Created on Fri Mar 19 11:36:31 2021
 
 @author: Lucien
+
+https://unnatsingh.medium.com/deep-q-network-with-pytorch-d1ca6f40bfda
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,7 +44,7 @@ randomseed = random.randint(0, 20000)
 #env = UnityEnvironment(file_name="C:/Users/Utilisateur/Desktop/MA1/Q2/BIS-ML-AgarISIA-development/ENV_AGARIO", seed=1, side_channels=[])
 channel = EngineConfigurationChannel()
 env = UnityEnvironment(
-    file_name="C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENV_Solo_Pellet_Eating_with_reset", seed=randomseed, side_channels=[channel])
+    file_name="ENV_Solo_Pellet_Eating_RGB", seed=randomseed, side_channels=[channel])
 channel.set_configuration_parameters(time_scale=8)  # jouer avec la valeur
 env.reset()
 
@@ -205,7 +207,7 @@ class DQN_bis(nn.Module):
         width = input_shape[1]
 
         #initial_channels = input_shape[2]
-        initial_channels = 3  # RGB
+        initial_channels = 3  # 3 for RGB, 1 for grayscale
         output_size = 4  # 4 actions
 
         conv_1_hw = self.conv_output_shape((height, width), 8, 4) # = (20, 20)
@@ -639,7 +641,7 @@ plt.title('')
 plt.xlabel('Episode #')
 plt.ylabel('Score')
 plt.legend()
-plt.savefig('C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENTRAINEMENTS DE PAQUES/RAPPORT !!!/Pellet eating/Average_score_Pellet_Eating_grayscale_reset.png')
+plt.savefig('Average_score_Pellet_Eating_RGB.png')
 plt.show()
 
 
@@ -647,13 +649,9 @@ plt.show()
 
 #SAVE AND LOAD LISTS
 data = np.array(scores)
-np.savez("C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENTRAINEMENTS DE PAQUES/RAPPORT !!!/Pellet eating/Scores vraiment grayscale", data)
+np.savez("Scores RGB", data)
 
-"""
-liste_cool = np.load("C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENTRAINEMENTS DE PAQUES/RAPPORT !!!/Pellet eating/SUPER LISTE COOL DE OUF.npz") #make sure you use the .npz!
-b = list(liste_cool_teleportee['arr_0'])
 
-"""
 
 # #############################
 # #####OBSERVING THE AGENT#####

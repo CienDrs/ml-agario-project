@@ -3,6 +3,8 @@
 Created on Mon Apr 12 13:49:29 2021
 
 @author: Lucien
+
+https://unnatsingh.medium.com/deep-q-network-with-pytorch-d1ca6f40bfda
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,14 +37,14 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-randomseed = 19240#random.randint(0, 20000)
+randomseed = random.randint(0, 20000) 
 
 
 
 #env = UnityEnvironment(file_name="C:/Users/Utilisateur/Desktop/MA1/Q2/BIS-ML-AgarISIA-development/ENV_AGARIO", seed=1, side_channels=[])
 channel = EngineConfigurationChannel()
 env = UnityEnvironment(
-file_name="C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENV_masses_random_au_debut_d_episode_grayscale", seed=randomseed, side_channels=[channel])
+file_name="ENV_4_players_RGB", seed=randomseed, side_channels=[channel])
 channel.set_configuration_parameters(time_scale=6)  # jouer avec la valeur
 env.reset()
 
@@ -134,7 +136,7 @@ class DQN_bis(nn.Module):
         width = input_shape[1]
 
         #initial_channels = input_shape[2]
-        initial_channels = 1  # 3 pour RGB, 1 pour grayscale
+        initial_channels = 3  # 3 pour RGB, 1 pour grayscale
         output_size = 4  # 4 actions
 
         conv_1_hw = self.conv_output_shape((height, width), 8, 4) # = (20, 20)
@@ -179,11 +181,11 @@ class DQN_bis(nn.Module):
         return h, w
 
 
-BUFFER_SIZE = 15000  # replay buffer size    100 000 c'est trop pour mon processeur
-BATCH_SIZE = 64     # minibatch size AUGMENTER je suis passé de 32 à 64 pour voir un coup
-GAMMA = 0.99             # discount factor
+BUFFER_SIZE = 15000     # replay buffer size    
+BATCH_SIZE = 64         # minibatch size 
+GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR = 0.00025               # learning rate je l'ai desendue un peu mettre à 0.00025 pour voir ?
+LR = 0.00025            # learning rate
 UPDATE_EVERY = 4        # how often to update the network
 
 
@@ -415,21 +417,21 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
 
     MaxScore = 0
     
-    WA1 = []
-    WA2 = []
-    WB1 = []
-    WB2 = []
+    # WA1 = []
+    # WA2 = []
+    # WB1 = []
+    # WB2 = []
     
-    LA1 = []
-    LA2 = []
-    LB1 = []
-    LB2 = []
+    # LA1 = []
+    # LA2 = []
+    # LB1 = []
+    # LB2 = []
 
     
     for i_episode in range(1, n_episodes+1):
         
-        LosersVector = [0,0,0,0]
-        WinnersVector = [0,0,0,0]
+        # LosersVector = [0,0,0,0]
+        # WinnersVector = [0,0,0,0]
 
         env.reset()  
         #tmp = [0, 0, 0, 0]
@@ -460,15 +462,15 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
             
             action_full = np.zeros((4, 4), dtype = int)
             
-            for i in range(2):   #len(action_full)
+            for i in range(len(action_full)):   #2
                 action_full[i][0] = action[i]
 
-
+            """
             action_rnd = np.random.randint(0, 4, size = 4).reshape(4, 1)
             
             for cnt in range(2,4):
                 action_full[cnt][0] = action_rnd[cnt]
-
+            """
             action_tuple = ActionTuple()
             action_tuple.add_continuous(action_full)
 
@@ -514,7 +516,7 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
                         else:
                             #si l'agent a mangé l'autre:
                             reward[k] = 1
-                            WinnersVector[k] += 1
+                            #WinnersVector[k] += 1
 
                     else:
                         #s'il a mangé un pellet
@@ -523,7 +525,7 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
                 elif(next_masses[k] == 0 and masses[k] !=0):
                     #Si l'agent s'est fait manger
                     reward[k] = -0.5 #-0.5
-                    LosersVector[k] += 1
+                    #LosersVector[k] += 1
                     
                     
                 else:
@@ -625,6 +627,7 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
 
         eps = max(eps*eps_decay, eps_end)  # on réduit epsilon
         
+        """
         WA1.append(WinnersVector[0])
         WA2.append(WinnersVector[1])
         WB1.append(WinnersVector[2])
@@ -634,7 +637,7 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
         LA2.append(LosersVector[1])
         LB1.append(LosersVector[2])
         LB2.append(LosersVector[3])
-        
+        """
         #print('WB2:', WB2)
         #print('winners: ', WinnersVector)
 
@@ -643,9 +646,9 @@ def dqn(env, n_episodes=2500, max_t=1000, eps_start = 1, eps_end=0.01, eps_decay
 
     
     torch.save(agent.qnetwork_local.state_dict(), 'Training_final_masses_random_grayscale_curriculum bis.pth')
-    return scores, agents_scores,  WA1, WA2, WB1, WB2, LA1, LA2, LB1, LB2
+    return scores, agents_scores#,  WA1, WA2, WB1, WB2, LA1, LA2, LB1, LB2
 
-scores, agents_scores, WA1, WA2, WB1, WB2, LA1, LA2, LB1, LB2 = dqn(env)
+scores, agents_scores = dqn(env)  #, WA1, WA2, WB1, WB2, LA1, LA2, LB1, LB2
 
 #print('scores out: ', scores )
 # plot the scores
@@ -701,13 +704,13 @@ plt.legend()
 plt.show()
 
 
-"""
+
 #SAVE AND LOAD LISTS
 data = np.array(agents_scores)
-np.savez("C:/Users/Utilisateur/Desktop/MA1/Q2/Projet environnements/ENTRAINEMENTS DE PAQUES/RAPPORT !!!/Curriculum vs no curriculum/agents Scores grayscale curriculum", data)
+np.savez("training", data)
 
 
-"""
+
 
 
 # #############################
