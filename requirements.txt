@@ -1,0 +1,5 @@
+mlagents==0.23.0
+mlagents-envs==0.23.0
+numpy==1.19.2
+scipy==1.6.1
+torch==1.4.0
